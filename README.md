@@ -158,16 +158,3 @@ ChurnDashboard/
 * Plotly
 
 ---
-
-## License
-
-This project is open-source and intended for **learning, portfolios, and demos**.
-
----
-
-If you want, next I can help you with:
-
-* Final **Streamlit Cloud polish**
-* **ML model integration** (Logistic / XGBoost)
-* **Interview explanation script**
-* **Portfolio write-up (Medium / LinkedIn)**
