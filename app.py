@@ -81,26 +81,56 @@ def load_data_from_path():
 # ---------------------------
 # Header and file upload
 # ---------------------------
+import os
+
+# ---------------------------
+# Header
+# ---------------------------
 st.title("Customer Churn EDA Dashboard")
 
-with st.expander("Upload data files (optional)", expanded=False):
+st.caption(
+    "To run the dashboard, provide train.csv and test.csv. "
+    "You can upload files below, or place them at data/train.csv and data/test.csv."
+)
+
+# ---------------------------
+# File upload (recommended for Streamlit Cloud)
+# ---------------------------
+with st.expander("Upload data files", expanded=True):
     col1, col2 = st.columns(2)
     with col1:
-        train_upload = st.file_uploader("Train CSV", type=["csv"], key="train")
+        train_upload = st.file_uploader("Upload train.csv", type=["csv"], key="train")
     with col2:
-        test_upload = st.file_uploader("Test CSV", type=["csv"], key="test")
+        test_upload = st.file_uploader("Upload test.csv", type=["csv"], key="test")
+
+# ---------------------------
+# Load data (no error UI)
+# ---------------------------
+def local_files_exist():
+    return os.path.exists("data/train.csv") and os.path.exists("data/test.csv")
 
 try:
     if train_upload is not None and test_upload is not None:
         df_all, df_train, df_test = load_data_from_files(train_upload, test_upload)
-        st.success("Files loaded.")
-    else:
+        st.success("Files uploaded and loaded successfully.")
+    elif local_files_exist():
         df_all, df_train, df_test = load_data_from_path()
-        st.info("Using local data files (data/train.csv and data/test.csv).")
-except Exception as e:
-    st.error("Could not load data. Upload train.csv and test.csv or ensure local paths exist.")
-    st.exception(e)
+        st.info("Loaded local files from data/train.csv and data/test.csv.")
+    else:
+        st.warning(
+            "No local dataset found. Please upload train.csv and test.csv using the upload section above."
+        )
+        st.stop()
+except Exception:
+    st.warning(
+        "Unable to read the uploaded files. Please upload valid CSV files named train.csv and test.csv."
+    )
     st.stop()
+st.info(
+    "Expected columns include: Churn (target), SubscriptionType, PaymentMethod, AccountAge/Tenure, and usage metrics."
+)
+st.stop()
+
 
 # ---------------------------
 # Column detection (robust)
